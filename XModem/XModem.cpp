@@ -230,6 +230,9 @@ void XModem::sendFile(File dataFile, const char *fileName)
     port->write(SOH);
     port->write((uint8_t)0x00);
     port->write((uint8_t)0xFF);
+    // Reset checksum stuff
+    checksumBuf = 0x00;
+    crcBuf = 0x00; 
     // send all '00' data (128byte)
     for (i = 0; i < 128; ++i) {
       this->outputByte(0x00);
@@ -238,8 +241,8 @@ void XModem::sendFile(File dataFile, const char *fileName)
     if (oldChecksum) {
       port->write((char)255 - checksumBuf); // need debug
     } else {
-      port->write((uint8_t)0x00);
-      port->write((uint8_t)0x00);
+      port->write((uint8_t)(crcBuf >> 8));
+      port->write((uint8_t)(crcBuf & 0xFF));
     }
     // Wait ACK from Rx.
     if (ACK != waitACK())
