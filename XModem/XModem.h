@@ -1,16 +1,16 @@
 /*
- * zmodem.h
- * zmodem constants
+ * XModem.h
+ * XModem constants
  * (C) Mattheij Computer Service 1994
  */
 
-/* $Id: zmodem.h,v 1.53 2012/10/24 19:03:14 deuce Exp $ */
+/* $Id: XModem.h,v 1.53 2012/10/24 19:03:14 deuce Exp $ */
 
-#ifndef _ZMODEM_H
-#define _ZMODEM_H
+#ifndef _XMODEM_H
+#define _XMODEM_H
 
 #include <Arduino.h>
-#include <SD.h>	
+#include <File.h>
 
 /*
  * ascii constants
@@ -53,4 +53,4 @@ class XModem
 		char waitACK(void);
 };
 
-#endif
+#endif // _XMODEM_H

@@ -1,5 +1,5 @@
-#include <SD.h>
-#include <XModem.h>
+#include <File.h>
+#include "XModem.h"
 
 // Number of seconds until giving up hope of receiving sync packets from
 // host.
@@ -227,7 +227,9 @@ void XModem::sendFile(File dataFile, char *fileName)
 		if (tryNo == SYNC_TIMEOUT)
 			goto err;
 	} while (inChar != ACK);
-
+  port->println("Finish sending.");
+  return;
+  
 	// When we get here everything was successful.
 err:
 	port->println("Error sending...");

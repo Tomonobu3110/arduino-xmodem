@@ -1,0 +1,8 @@
+# Arduino IDE project files
+*.ino
+
+# backup files
+*~
+*.bak
+*.BAK
+
