@@ -112,9 +112,8 @@ char XModem::waitACK(void)
 	return(inChar);
 }
 
-void XModem::sendFile(File dataFile, char *fileName)
+void XModem::sendFile(File dataFile, const char *fileName)
 {
-	unsigned char finished=0;
 	char inChar;
 	int i;
 	unsigned char tryNo;
@@ -160,9 +159,9 @@ void XModem::sendFile(File dataFile, char *fileName)
 	if (this->sync()!=0)
 		goto err;
 
-	oldChecksum =  (inChar == NAK);
+	oldChecksum = (inChar == NAK);
 
-	while (!finished)
+	while (0 < dataFile.available())
 	{
 		filepos = dataFile.position();
 
@@ -189,13 +188,8 @@ void XModem::sendFile(File dataFile, char *fileName)
 			port->write(~packetNo);
 			for (i = 0; i<packetLen; i++)
 			{
-				inChar = dataFile.read();
+        inChar = (0 < dataFile.available()) ? dataFile.read() : EOF;
 				this->outputByte(inChar);
-				finished = !dataFile.available();
-				// Pad file with zeroes
-				if (finished)
-					inChar = 0x00;
-
 			}
 			// Send out checksum, either CRC-16 CCITT or
 			// classical inverse of sum of bytes. 
@@ -216,7 +210,7 @@ void XModem::sendFile(File dataFile, char *fileName)
 		
 		packetNo++;
 	}
-	// Send EOT and wait for ACK
+  // Send EOT and wait for ACK
 	tryNo = 0;
 	do
 	{
@@ -227,6 +221,31 @@ void XModem::sendFile(File dataFile, char *fileName)
 		if (tryNo == SYNC_TIMEOUT)
 			goto err;
 	} while (inChar != ACK);
+
+  // Send "all 00 data" to finish YModem.
+  if (this->mode == ModeYModem) {
+    // wait 'C' from Rx(PC)
+    this->sync();
+    // send header. 
+    port->write(SOH);
+    port->write((uint8_t)0x00);
+    port->write((uint8_t)0xFF);
+    // send all '00' data (128byte)
+    for (i = 0; i < 128; ++i) {
+      this->outputByte(0x00);
+    }
+    // send checksum/CRC
+    if (oldChecksum) {
+      port->write((char)255 - checksumBuf); // need debug
+    } else {
+      port->write((uint8_t)0x00);
+      port->write((uint8_t)0x00);
+    }
+    // Wait ACK from Rx.
+    if (ACK != waitACK())
+      goto err;
+  }
+  
   port->println("Finish sending.");
   return;
   

@@ -29,6 +29,7 @@
 #define	XOFF		0x13
 #define	NAK			0x15
 #define	CAN			0x18
+#define EOF     0x1a
 #endif
 
 #define ModeXModem	0
@@ -38,7 +39,7 @@ class XModem
 {
 	public:
 		XModem(Stream *port, char mode);
-		void sendFile(File dataFile, char *fileName);
+		void sendFile(File dataFile, const char *fileName);
 	private:
 		Stream *port;
 		unsigned char packetNo, checksumBuf;
