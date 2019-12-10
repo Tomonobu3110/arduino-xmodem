@@ -1,6 +1,6 @@
 /*
-   XModem.h
-   XModem/YModem library
+   XModem.cpp
+   XModem/YModem Tx library
    (C) Mattheij Computer Service 1994
    Modified by Tomonobu.Saito@gmail.com 2019
 */

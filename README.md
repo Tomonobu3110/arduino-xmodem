@@ -42,4 +42,4 @@ or, implement it and do "pull request" :)
 * Original implimentation by (C) Mattheij Computer Service 1994  
 * Modified by Tomo3110(Tomonobu.Saito@gmail.com) 2019  
 
-# License
+## License
