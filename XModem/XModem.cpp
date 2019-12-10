@@ -76,6 +76,8 @@ char XModem::sync(void)
 	else
 	{ // This is assumed to be 'C'
 		this->oldChecksum=0;
+/* ### couldn't find such specification.
+ * ### http://www.blunk-electronic.de/train-z/pdf/xymodem.pdf
 		// Check if there is a K after the C, that means we can do 1024 byte blocks
 		// Give sender a short time to send the K
 		port->setTimeout(100);
@@ -87,8 +89,8 @@ char XModem::sync(void)
 		}
 		// Reset the timeout to one second
 		port->setTimeout(1000);
+*/
 	}
-
 	return(0);
 }
 
@@ -137,6 +139,14 @@ void XModem::sendFile(File dataFile, const char *fileName)
 		{
 			this->outputByte(fileName[i]);
 		}
+    char filesize[16];
+    memset(filesize, 0, sizeof(filesize));
+    sprintf(filesize, "%d", dataFile.size());
+    this->outputByte((uint8_t)0x00);
+    ++i;
+    for (int j = 0; j < strlen(filesize); ++j, ++i) {
+      this->outputByte(filesize[j]);
+    }
 		for (; i<128; i++)
 		{
 			this->outputByte((uint8_t)0x00);
@@ -152,10 +162,8 @@ void XModem::sendFile(File dataFile, const char *fileName)
 		// we communicate to an XMODEM-1k client
 		// which might not know about the 0 block.
 		waitACK();
-	} else
-	{
 	}
-	
+ 
 	if (this->sync()!=0)
 		goto err;
 
