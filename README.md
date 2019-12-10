@@ -18,7 +18,18 @@ This library uses File and Stream class, these are common for Arduino developmen
 
 # Installation
 
+clone or download this git repository.
+```
+$ git clone https://github.com/Tomonobu3110/arduino-xmodem.git
+```
+Then, include XModem library by Arduino IDE.  
+Menu > Sketch > Include Library > Install Library... > (Select XModel directory)  
+
 # Usage
+
+You can find two examples after install XModem library.  
+* XModem_SD_Download
+* YModem_SD_Download
 
 # Note
 
