@@ -63,29 +63,12 @@ char XModem::sync(void)
     if (tryNo == SYNC_TIMEOUT)
       return (-1);
   } while ((inChar != 'C') && (inChar != NAK));
+
   // Determine which checksum algorithm to use
   // this routine also determines the packet length
   this->packetLen = 128;
-  if (inChar == NAK)
-    this->oldChecksum = 1;
-  else
-  { // This is assumed to be 'C'
-    this->oldChecksum = 0;
-    /* ### couldn't find such specification.
-       ### http://www.blunk-electronic.de/train-z/pdf/xymodem.pdf
-    		// Check if there is a K after the C, that means we can do 1024 byte blocks
-    		// Give sender a short time to send the K
-    		port->setTimeout(100);
-    		tryNo=0;
-    		port->readBytes(&tryNo, 1);
-    		if (tryNo=='K')
-    		{
-    			this->packetLen = 1024;
-    		}
-    		// Reset the timeout to one second
-    		port->setTimeout(1000);
-    */
-  }
+  this->oldChecksum = (inChar == NAK) ? 1 : 0;
+
   return (0);
 }
 
@@ -178,6 +161,13 @@ void XModem::sendFile(File dataFile, const char *fileName)
       // Reset checksum stuff
       checksumBuf = 0x00;
       crcBuf = 0x00;
+
+      // Try to use 1K(1024 byte) mode if possible
+      if (ModeYModem == mode && 128 < dataFile.available()) {
+        packetLen = 1024; // 1K mode
+      } else {
+        packetLen = 128; // normal mode
+      }
 
       // Try to send packet, so header first
       if (packetLen == 128)
