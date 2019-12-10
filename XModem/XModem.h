@@ -1,8 +1,9 @@
 /*
- * XModem.h
- * XModem constants
- * (C) Mattheij Computer Service 1994
- */
+   XModem.h
+   XModem/YModem constants
+   (C) Mattheij Computer Service 1994
+   Modified by Tomonobu.Saito@gmail.com 2019
+*/
 
 /* $Id: XModem.h,v 1.53 2012/10/24 19:03:14 deuce Exp $ */
 
@@ -13,8 +14,8 @@
 #include <File.h>
 
 /*
- * ascii constants
- */
+   ascii constants
+*/
 
 #ifndef SOH
 #define SOH     0x01
@@ -37,21 +38,21 @@
 
 class XModem
 {
-	public:
-		XModem(Stream *port, char mode);
-		void sendFile(File dataFile, const char *fileName);
-	private:
-		Stream *port;
-		unsigned char packetNo, checksumBuf;
-		long filepos;
-		unsigned int packetLen;
-		int crcBuf;
-		unsigned char mode;
-		unsigned char oldChecksum;
+  public:
+    XModem(Stream *port, char mode);
+    void sendFile(File dataFile, const char *fileName);
+  private:
+    Stream *port;
+    unsigned char packetNo, checksumBuf;
+    long filepos;
+    unsigned int packetLen;
+    int crcBuf;
+    unsigned char mode;
+    unsigned char oldChecksum;
 
-		char sync(void);
-		void outputByte(unsigned char inChar);
-		char waitACK(void);
+    char sync(void);
+    void outputByte(unsigned char inChar);
+    char waitACK(void);
 };
 
 #endif // _XMODEM_H
