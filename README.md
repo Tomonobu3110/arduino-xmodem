@@ -33,6 +33,10 @@ You can find two examples after install XModem library.
 
 ## Note
 
+This library supprot only Tx (Transmit eXchange side = sender).  
+If you want Rx (= Receiver), please find another library.  
+or, implement it and do "pull request" :)  
+
 ## Author
 
 * Original implimentation by (C) Mattheij Computer Service 1994  
