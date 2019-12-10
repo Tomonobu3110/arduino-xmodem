@@ -9,21 +9,9 @@
 #define MAX_RETRY    30
 
 /* Initialize XModem session */
-XModem::XModem(Stream *port, char mode)
+XModem::XModem(Stream *port, char mode) :
+  packetNo(1), crcBuf(0), checksumBuf(0), filepos(0), packetLen(128), mode(mode), port(port)
 {
-	packetNo = 1;
-	crcBuf = 0;
-	checksumBuf = 0;
-	filepos = 0;
-	packetLen = 128; // Default number of payload bytes
-	if (mode == ModeYModem)
-	{
-		this->mode = ModeYModem;
-	} else
-	{
-		this->mode = ModeXModem;
-	}
-	this->port = port;
 }
 
 /* Send out a byte of payload data,
@@ -167,8 +155,6 @@ void XModem::sendFile(File dataFile, const char *fileName)
 	if (this->sync()!=0)
 		goto err;
 
-	oldChecksum = (inChar == NAK);
-
 	while (0 < dataFile.available())
 	{
 		filepos = dataFile.position();
@@ -203,11 +189,11 @@ void XModem::sendFile(File dataFile, const char *fileName)
 			// classical inverse of sum of bytes. 
 			// Depending on how the received introduced himself
 			if (oldChecksum)
-				port->write((char)255-checksumBuf);
+				port->write((char)checksumBuf);
 			else
 			{
-				port->write((char) (crcBuf >>8));
-				port->write((char) (crcBuf & 0xFF));
+				port->write((char)(crcBuf >> 8));
+				port->write((char)(crcBuf & 0xFF));
 			}
 
 			inChar = waitACK();
@@ -247,7 +233,7 @@ void XModem::sendFile(File dataFile, const char *fileName)
     }
     // send checksum/CRC
     if (oldChecksum) {
-      port->write((char)255 - checksumBuf); // need debug
+      port->write((char)checksumBuf); // need debug
     } else {
       port->write((uint8_t)(crcBuf >> 8));
       port->write((uint8_t)(crcBuf & 0xFF));
