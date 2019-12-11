@@ -87,7 +87,7 @@ char XModem::waitACK(void)
     if (i > 200)
       return (-1);
     if (inChar == CAN)
-      return (-1);
+      return CAN;
   } while ((inChar != NAK) && (inChar != ACK) && (inChar != 'C'));
   return (inChar);
 }
@@ -130,11 +130,11 @@ void XModem::sendFile(File dataFile, const char *fileName)
       this->outputByte((uint8_t)0x00);
     }
     if (oldChecksum)
-      port->write((char)255 - checksumBuf);
+      port->write((char)checksumBuf);
     else
     {
-      port->write((char) (crcBuf >> 8));
-      port->write((char) (crcBuf & 0xFF));
+      port->write((char)(crcBuf >> 8));
+      port->write((char)(crcBuf & 0xFF));
     }
     // Discard ACK/NAK/CAN, in case
     // we communicate to an XMODEM-1k client
@@ -195,6 +195,7 @@ void XModem::sendFile(File dataFile, const char *fileName)
       }
 
       inChar = waitACK();
+      if (CAN == inChar) goto err;
       tryNo++;
       if (tryNo > MAX_RETRY)
         goto err;
