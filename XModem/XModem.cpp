@@ -145,6 +145,7 @@ void XModem::sendFile(File dataFile, const char *fileName)
   if (this->sync() != 0)
     goto err;
 
+  packetNo = 1;
   while (0 < dataFile.available())
   {
     filepos = dataFile.position();
