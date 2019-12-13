@@ -7,7 +7,7 @@ using XModem/YModem protocol.
 ## Features
 
 XModem support. (Both of checksum / CRC mode)  
-YModem support. (1024k transfer is almost ready)  
+YModem support. (1024k transfer is ready)  
 
 ## Requirements
 
